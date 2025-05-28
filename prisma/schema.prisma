@@ -1,0 +1,499 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model auth_log {
+  id         Int           @id @default(autoincrement())
+  user_id    Int
+  type       auth_log_type @default(login)
+  created_at DateTime      @default(now()) @db.Timestamp(0)
+  user       user          @relation(fields: [user_id], references: [id])
+}
+
+enum auth_log_type {
+  login
+  logout
+}
+
+model user {
+  id              Int       @id @default(autoincrement())
+  name            String    @db.VarChar(244)
+  email           String    @unique @db.VarChar(100)
+  password        String    @db.Text
+  birth_date      DateTime? @db.Date
+  gender          String?   @db.VarChar(244)
+  remember_token  String?   @db.Text
+  status          String    @db.VarChar(100)
+  verified_status String    @default("PENDING")
+  lat_long        String?   @db.VarChar(244)
+  postal_code     String?   @db.VarChar(244)
+  address         String?   @db.VarChar(244)
+  city            String?   @db.VarChar(244)
+  country         String?   @db.VarChar(244)
+  image           String?   @db.VarChar(244)
+  state           String?   @db.VarChar(244)
+  number          String?   @db.VarChar(244)
+  role_id         Int
+  badge_id        Int?
+  business_id     Int?
+  created_by      Int?
+  created_at      DateTime  @default(now()) @db.Timestamp(0)
+  updated_at      DateTime  @default(now()) @db.Timestamp(0)
+  last_login      DateTime  @default(now()) @db.Timestamp(0)
+  deleted         Boolean   @default(false)
+  approved        Boolean   @default(false)
+
+  auth_log       auth_log[]
+  roles          roles          @relation(fields: [role_id], references: [id])
+  business       business?      @relation(fields: [business_id], references: [id])
+  badge          badge?         @relation(fields: [badge_id], references: [id])
+  reviews        review[]       @relation("UserReviews")
+  review_approve review[]       @relation("UserReviewsApproved")
+  favorites      favorites[]
+  blogs          blog[]
+  stories        story[]
+  page           page[]
+  comment        comment[]
+  like           like[]
+  notifications  notification[]
+  user_package   user_package[]
+  payment        payment[]
+  user_meta      user_meta[]
+  contact        contact[]
+  badge_log      badge_log[]
+  review_reports review_report[]
+  points         points[]
+}
+
+model user_meta {
+  id      Int     @id @default(autoincrement())
+  user_id Int
+  key     String? @db.VarChar(255)
+  value   String? @db.VarChar(255)
+  user    user    @relation(fields: [user_id], references: [id])
+}
+
+model roles {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String?  @db.Text
+  created_at  DateTime @default(now())
+  updated_at  DateTime @default(now()) @updatedAt
+  deleted     Boolean  @default(false)
+
+  user        user[]
+  package     packages[]
+}
+
+model business {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?  @db.Text
+  address     String?
+  phone       String?
+  website     String?
+  image       String?
+  rating      Float?   @db.Float
+  created_at  DateTime @default(now())
+  updated_at  DateTime @default(now()) @updatedAt
+  deleted     Boolean  @default(false)
+  verified_status String    @default("PENDING")
+  email       String?
+  lat_long    String?
+  postal_code String?
+  city        String?
+  country     String?
+  key         String?  @unique @default(uuid())
+
+  comments   comment[]
+  user       user[]
+  reviews    review[]            @relation("BusinessReviews")
+  categories business_category[]
+  like       like[]
+  contact    contact[]
+  favorites  favorites[]
+}
+
+model review {
+  id              Int      @id @default(autoincrement())
+  user_id         Int
+  business_id     Int
+  category_id     Int
+  rating          Int
+  weight          Float?   @db.Float
+  title           String?
+  comment         String?  @db.Text
+  status          String?
+  type            String?
+  tags            String?  @db.Text
+  verified_status String   @default("PENDING")
+  created_at      DateTime @default(now())
+  updated_at      DateTime @default(now()) @updatedAt
+  approved        Boolean  @default(false)
+  approved_by     Int?
+  deleted         Boolean  @default(false)
+  latitude        Float?   @db.Float
+  longitude       Float?   @db.Float
+
+  images    review_images[]
+  favorites favorites[]
+  approver  user?           @relation("UserReviewsApproved", fields: [approved_by], references: [id])
+  user      user            @relation("UserReviews", fields: [user_id], references: [id])
+  business  business        @relation("BusinessReviews", fields: [business_id], references: [id])
+  category  category        @relation(fields: [category_id], references: [id])
+  comments  comment[]
+  like      like[]
+  reports   review_report[]
+  meta      review_meta[]
+}
+
+model review_meta {
+  id        Int      @id @default(autoincrement())
+  review_id Int
+  key       String
+  value     String
+
+  review    review @relation(fields: [review_id], references: [id])
+}
+
+model review_images {
+  id         Int      @id @default(autoincrement())
+  review_id  Int
+  file_type  String
+  file_path  String
+  created_at DateTime @default(now())
+
+  review review @relation(fields: [review_id], references: [id])
+}
+
+model review_report {
+  id          Int       @id @default(autoincrement())
+  review_id   Int
+  reported_by Int
+  reason      String
+  status      String    @default("PENDING")
+  created_at  DateTime  @default(now())
+  resolved_at DateTime?
+
+  review      review    @relation(fields: [review_id], references: [id])
+  user        user      @relation(fields: [reported_by], references: [id])
+}
+
+model favorites {
+  id          Int       @id @default(autoincrement())
+  user_id     Int
+  review_id   Int?
+  business_id Int?
+  created_at  DateTime  @default(now())
+
+  user        user      @relation(fields: [user_id], references: [id])
+  review      review?   @relation(fields: [review_id], references: [id])
+  business    business? @relation(fields: [business_id], references: [id])
+}
+
+model category {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?  @db.Text
+  parent_id   Int?
+  image       String?
+  weight      Float    @default(1) @db.Float
+  nv_weight   Float    @default(1) @db.Float
+  created_at  DateTime @default(now())
+  updated_at  DateTime @default(now()) @updatedAt
+  deleted     Boolean  @default(false)
+
+  parent     category?           @relation("CategoryHierarchy", fields: [parent_id], references: [id])
+  children   category[]          @relation("CategoryHierarchy")
+  businesses business_category[]
+  review     review[]
+}
+
+model business_category {
+  id          Int @id @default(autoincrement())
+  business_id Int
+  category_id Int
+
+  business business @relation(fields: [business_id], references: [id])
+  category category @relation(fields: [category_id], references: [id])
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+  deleted    Boolean  @default(false)
+
+  @@unique([business_id, category_id])
+}
+
+model blog_category {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?  @db.Text
+  parent_id   Int?
+  image       String?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @default(now()) @updatedAt
+  deleted     Boolean  @default(false)
+
+  parent      blog_category?    @relation("BlogCategoryHierarchy", fields: [parent_id], references: [id])
+  children    blog_category[]   @relation("BlogCategoryHierarchy")
+  blog        blog[]
+}
+
+model blog {
+  id          Int      @id @default(autoincrement())
+  title       String
+  content     String   @db.Text
+  type        String
+  category_id Int?
+  author_id   Int
+  file_type   String?
+  file_url    String?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @default(now()) @updatedAt
+  deleted     Boolean  @default(false)
+
+  comments comment[]
+  author   user      @relation(fields: [author_id], references: [id])
+  like     like[]
+  category blog_category? @relation(fields: [category_id], references: [id])
+}
+
+model story {
+  id        Int      @id @default(autoincrement())
+  title     String?
+  content   String   @db.Text
+  imageUrl  String?
+  author_id Int
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  comments comment[]
+  author   user      @relation(fields: [author_id], references: [id])
+  like     like[]
+}
+
+model page {
+  id                Int      @id @default(autoincrement())
+  slug              String?
+  title             String?
+  content           String?   @db.Text
+  imageUrl          String?
+  author_id         Int
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @default(now()) @updatedAt
+  deleted           Boolean  @default(false)
+  meta_title        String?
+  meta_description  String?  @db.Text
+  type              String?
+  url               String?
+
+  author    user        @relation(fields: [author_id], references: [id])
+  menu_item menu_item[]
+}
+
+model menu {
+  id         Int      @id @default(autoincrement())
+  name       String
+  content    String?  @db.Text
+  location   String?
+  status     String?
+  deleted    Boolean  @default(false)
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+
+  items menu_item[]
+}
+
+model menu_item {
+  id         Int      @id @default(autoincrement())
+  title      String?
+  url        String?
+  menu_id    Int
+  page_id    Int?
+  parent_id  Int?
+  sort       Int?
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+
+  menu     menu        @relation(fields: [menu_id], references: [id])
+  parent   menu_item?  @relation("MenuItemParent", fields: [parent_id], references: [id])
+  page     page?       @relation(fields: [page_id], references: [id])
+  children menu_item[] @relation("MenuItemParent")
+}
+
+model comment {
+  id          Int      @id @default(autoincrement())
+  content     String   @db.Text
+  author_id   Int
+  parent_id   Int?
+  business_id Int?
+  blog_id     Int?
+  review_id   Int?
+  story_id    Int?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @default(now()) @updatedAt
+
+  parent   comment?  @relation("CommentReplies", fields: [parent_id], references: [id])
+  author   user      @relation(fields: [author_id], references: [id], onDelete: Cascade)
+  replies  comment[] @relation("CommentReplies")
+  like     like[]
+  business business? @relation(fields: [business_id], references: [id])
+  blog     blog?     @relation(fields: [blog_id], references: [id])
+  review   review?   @relation(fields: [review_id], references: [id])
+  story    story?    @relation(fields: [story_id], references: [id])
+}
+
+model like {
+  id          Int      @id @default(autoincrement())
+  author_id   Int
+  business_id Int?
+  blog_id     Int?
+  review_id   Int?
+  story_id    Int?
+  comment_id  Int?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @default(now()) @updatedAt
+
+  author   user      @relation(fields: [author_id], references: [id], onDelete: Cascade)
+  business business? @relation(fields: [business_id], references: [id])
+  blog     blog?     @relation(fields: [blog_id], references: [id])
+  review   review?   @relation(fields: [review_id], references: [id])
+  story    story?    @relation(fields: [story_id], references: [id])
+  comment  comment?  @relation(fields: [comment_id], references: [id])
+}
+
+model notification {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  type       String
+  message    String
+  is_read    Boolean  @default(false)
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+
+  user user @relation(fields: [user_id], references: [id])
+}
+
+model packages {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String   @db.Text
+  price       Float    @db.Float
+  days        Int?
+  role_id     Int?
+  deleted     Boolean  @default(false)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @default(now()) @updatedAt
+
+  user_package user_package[]
+  role         roles?     @relation(fields: [role_id], references: [id])
+}
+
+model user_package {
+  id         Int      @id @default(autoincrement())
+  package_id Int
+  user_id    Int
+  payment_id Int?
+  price      Float    @db.Float
+  status     String   @default("PENDING")
+  expiry     DateTime @default(now())
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+
+  user    user     @relation(fields: [user_id], references: [id])
+  package packages @relation(fields: [package_id], references: [id])
+  payment payment? @relation(fields: [payment_id], references: [id])
+}
+
+model payment {
+  id           Int      @id @default(autoincrement())
+  amount       Float    @db.Float
+  status       String   @default("PENDING")
+  description  String?  @db.Text
+  response     String?  @db.Text
+  reference_id Int?
+  type         String?
+  created_by   Int
+  created_at   DateTime @default(now()) @db.Timestamp(0)
+  updated_at   DateTime @default(now()) @updatedAt @db.Timestamp(0)
+  is_deleted   Int      @default(0) @db.TinyInt
+
+  user         user           @relation(fields: [created_by], references: [id])
+  user_package user_package[]
+}
+
+model contact {
+  id          Int      @id @default(autoincrement())
+  name        String
+  email       String
+  message     String   @db.Text
+  response    String?  @db.Text
+  created_by  Int?
+  business_id Int?
+  is_deleted  Boolean  @default(false)
+  created_at  DateTime @default(now()) @db.Timestamp(0)
+  updated_at  DateTime @default(now()) @db.Timestamp(0)
+  status      String   @default("PENDING")
+
+  user     user?     @relation(fields: [created_by], references: [id])
+  business business? @relation(fields: [business_id], references: [id])
+}
+
+model badge {
+  id                 Int      @id @default(autoincrement())
+  name               String
+  description        String   @db.Text
+  icon               String?
+  min_points         Int      @default(0)
+  max_points         Int      @default(0)
+  success_percentage Int?     @default(0)
+  success_count      Int?     @default(0)
+  auto_approve       Boolean  @default(false)
+  is_deleted         Boolean  @default(false)
+  created_at         DateTime @default(now())
+  updated_at         DateTime @default(now()) @updatedAt
+
+  users     user[]
+  badge_log badge_log[]
+}
+
+model badge_log {
+  id         Int      @id @default(autoincrement())
+  badge_id   Int
+  user_id    Int
+  is_deleted Boolean  @default(false)
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+
+  user  user  @relation(fields: [user_id], references: [id])
+  badge badge @relation(fields: [badge_id], references: [id])
+}
+
+model points {
+  id           Int      @id @default(autoincrement())
+  user_id      Int
+  source       String?
+  description  String?  @db.Text
+  in           Int      @default(0)
+  out          Int      @default(0)
+  reference_id Int      @default(0)
+  created_at   DateTime @default(now())
+  updated_at   DateTime @default(now()) @updatedAt
+
+  user         user    @relation(fields: [user_id], references: [id])
+}
+
+model admin_options {
+  id         Int      @id @default(autoincrement())
+  key        String?  @unique
+  value      String?  @db.Text
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}

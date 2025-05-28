@@ -1,0 +1,59 @@
+<% data.title = 'Your <span style="font-weight: 600;">Business is Now Live</span> on Trusty Feedback!'; %>
+<% data.banner = data.banner ? data.banner : '/public/images/business-approval-hero.png'; %>
+<%- include('partials/header', data) %>
+<div>
+    <h3
+        style="font-size: 24px; font-weight: 600; display: inline-block; margin: 0; vertical-align: middle;">
+        Hi <%= data.name %></h3>
+    <img src="<%= data.LIVE_URL %>/public/images/waving-had-icon.png"
+        style="display: inline-block; max-width: 29px; vertical-align: middle; margin-left: 5px;" />
+
+    <p style="font-size: 16px; font-weight: 400; max-width: 518px; margin: 10px auto;">
+        Congratulations!<img
+            style="width: 17px; height: 17px; vertical-align: middle; padding: 0px 3px 0px 5px;"
+            src="<%= data.LIVE_URL %>/public/images/Party Popper.png" /> Your business, <%= data.businessName %>, has been
+        successfully approved and is now live
+        on Trusty Feedback.
+    </p>
+    <h6 style="font-size: 16px; font-weight: 500; padding:2px 0px 0px 0px; margin: 0;">
+        Here’s what’s next:
+    </h6>
+    <div
+        style="margin: 20px 28px 20px 30px; background-color: rgba(231, 244, 239, 1); border-radius: 25px; text-align: left; padding: 15px 20px 0px 20px; font-size: 16px; border: 1px solid rgba(23, 37, 63, 0.1);">
+        <ol style="padding-left: 20px;">
+            <li style="padding: 4px 12px 0px 10px;">
+                <h4 style="margin: 0; font-size: 18px; color: rgba(0, 49, 92, 1); font-weight: bold; margin-bottom: 5px;">
+                    Start Collecting Reviews:
+                </h4>
+                <p style="margin: 0px 0 17px 0; font-size: 16px; color: rgba(0, 49, 92, 0.8);">
+                    Encourage your customers to leave reviews to build credibility and attract new clients.
+                </p>
+            </li>
+            <li style="padding: 0px 12px 0px 10px;">
+                <h4 style="margin: 0; font-size: 18px; color: rgba(0, 49, 92, 1); font-weight: bold; margin-bottom: 5px;">
+                    Track Your Performance:
+                </h4>
+                <p style="margin: 0px 0 18px 0; font-size: 16px; color: rgba(0, 49, 92, 0.8);">
+                    Monitor reviews, ratings, and customer feedback in real time through your dashboard.
+                </p>
+            </li>
+            <li style="padding: 0px 12px 4px 10px;">
+                <h4 style="margin: 0; font-size: 18px; color: rgba(0, 49, 92, 1); font-weight: bold; margin-bottom: 5px;">
+                    Showcase Your Success:
+                </h4>
+                <p style="margin: 0px 0 18px 0; font-size: 16px; color: rgba(0, 49, 92, 0.8);">
+                    Use your Trusty Feedback profile as a marketing tool to highlight your reputation.
+                </p>
+            </li>
+        </ol>
+    </div>
+    <p style="font-size: 16px; font-weight: 500; max-width: 500px; margin: 10px auto 28px auto;">
+        We’re excited to help your business grow and thrive!
+    </p>
+    <a href="#"
+        style="background-color: rgba(4, 218, 141, 1); padding: 16px 30px; display: inline-block; border-radius: 100px; text-decoration: none;">
+        <span style="color: rgba(23, 37, 63, 1); font-size: 16px; font-weight: 600;">Visit Your
+            Dashboard</span>
+    </a>
+</div>
+<%- include('partials/footer', data) %>

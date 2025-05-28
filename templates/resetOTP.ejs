@@ -1,0 +1,52 @@
+<% data.title = data.title ? data.title : 'Reset Your Password'; %>
+<% data.banner = data.banner ? data.banner : '/public/images/forgot-pass-hero.png'; %>
+<%- include('partials/header', data) %>
+<div>
+    <h3
+        style="font-size: 24px; font-weight: 600; display: inline-block; margin: 0; vertical-align: middle;">
+        Hi <%= data.name %></h3>
+    <img src="<%= data.LIVE_URL %>/public/images/waving-had-icon.png"
+        style="display: inline-block; max-width: 29px; vertical-align: middle; margin-left: 5px;" />
+
+    <p style="font-size: 16px; font-weight: 400; max-width: 518px; margin: 10px auto; color: #000000;">
+        No worries! You can <span style="font-weight: 600;">reset</span> your password by entering the
+        One-Time Password (OTP) below:
+    </p>
+    <div
+        style="margin: 20px 28px 20px 30px; background-color: rgba(231, 244, 239, 1); border-radius: 25px; text-align: left; padding: 20px 20px 15px 20px; font-size: 16px; border: 1px solid rgba(23, 37, 63, 0.1);">
+        <div class="otp-section" style="text-align: center;">
+            <h3 style="padding: 0px 0px 2px 0px; margin: 0; font-size: 18px; font-weight: 600;">Your OTP
+                Code</h3>
+
+            <p style="padding: 0; margin: 0; font-weight: 700; font-size: 35px;"><%= data.otp %></p>
+        </div>
+    </div>
+    <div class="verify-method" style="text-align: left; padding-left: 10px; margin-bottom: 30px;">
+        <h3 style="margin-bottom: 15px; padding-left: 25px; color: #17253F;">How to Use Your OTP:</h3>
+        <ol style="margin: 0;">
+            <li style="font-size: 16px; padding-bottom: 7px;">Enter this code on the password reset
+                page.
+            </li>
+            <li style="font-size: 16px;">Follow the steps to create a new password.
+            </li>
+        </ol>
+
+    </div>
+    <a href="#"
+        style="background-color: rgba(4, 218, 141, 1); padding: 16px 30px; display: inline-block; border-radius: 100px; text-decoration: none; margin-bottom: 7px;">
+        <span style="color: rgba(23, 37, 63, 1); font-size: 16px; font-weight: 600;">Reset My Password
+        </span>
+    </a>
+    <div class="dashed-border-section"
+        style="margin: 20px 28px 40px 30px; background-color: rgba(231, 244, 239, 1); border-radius: 20px; text-align: left; padding: 17px 10px 17px 10px; font-size: 16px; border: 1px dashed rgba(0, 0, 0,0.2);">
+        <div class="otp-section" style="text-align: center;">
+            <p
+                style="padding: 0; font-size: 14px; font-weight: 400; color: rgba(0, 0, 0,0.6); max-width: 505px; margin: 0 auto; line-height: 1.7;">
+                This OTP is valid for <span style="font-weight: 600;">10 minutes</span> If you didn’t
+                request a password reset, please ignore
+                this email, and your account will remain secure.
+            </p>
+        </div>
+    </div>
+</div>
+<%- include('partials/footer', data) %>

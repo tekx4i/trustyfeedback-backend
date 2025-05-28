@@ -1,0 +1,10 @@
+<%- include('partials/header', data) %>
+<div>
+    <h3
+        style="font-size: 24px; font-weight: 600; display: inline-block; margin: 0; vertical-align: middle;">
+        Hi <%= data.name %></h3>
+    <img src="http://54.210.128.93/backendapp/public/images/waving-had-icon.png"
+        style="display: inline-block; max-width: 29px; vertical-align: middle; margin-left: 5px;" />
+    <%- data.message %>
+</div>
+<%- include('partials/footer', data) %>

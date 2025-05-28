@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE `page` ADD COLUMN `type` VARCHAR(191) NULL,
+    ADD COLUMN `url` VARCHAR(191) NULL,
+    MODIFY `content` TEXT NULL;
